@@ -40,6 +40,14 @@ def get_groq_response(task, base64_image):
         print(f"Error: {str(e)}")
         return None
 
+def save_to_file(response, filename="output.py"):
+    try:
+        with open(filename, "w", encoding="utf-8") as file:
+            file.write(response)
+        print(f"Output saved to {filename}")
+    except Exception as e:
+        print(f"Error saving file: {str(e)}")
+
 def main():
     image_path = "./schema.jpg"
     base64_image = encode_image(image_path)
@@ -66,6 +74,8 @@ def main():
                 print("-" * 50)
                 print(response)
                 print("-" * 50)
+                
+                save_to_file(response)
             else:
                 print("No response received")
         else:
