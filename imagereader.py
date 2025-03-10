@@ -40,11 +40,14 @@ def get_groq_response(task, base64_image):
         print(f"Error: {str(e)}")
         return None
 
-def save_to_file(response, filename="output.py"):
+def save_to_file(response, filename="models.py"):
     try:
         with open(filename, "w", encoding="utf-8") as file:
+            file.write("from sqlalchemy import Column, Integer, String\n")
+            file.write("from sqlalchemy.ext.declarative import declarative_base\n\n")
+            file.write("Base = declarative_base()\n\n")
             file.write(response)
-        print(f"Output saved to {filename}")
+        print(f"ORM model saved to {filename}")
     except Exception as e:
         print(f"Error saving file: {str(e)}")
 
@@ -54,32 +57,26 @@ def main():
     if base64_image is None:
         return
     
-    print("Image Processing Assistant with Groq")
+    print("Image to ORM Model Generator with Groq")
     print("Type 'exit' to quit the program")
     print("-" * 50)
     
     while True:
-        task = input("\nEnter your task: ").strip()
+        task = "Generate SQLAlchemy ORM classes from this schema"
         
-        if task.lower() in ['q', 'quit', 'exit']:
-            print("Goodbye!")
-            break
+        print("\nProcessing your request...")
+        response = get_groq_response(task, base64_image)
         
-        if task:
-            print("\nProcessing your request...")
-            response = get_groq_response(task, base64_image)
-            
-            if response:
-                print("\nResponse:")
-                print("-" * 50)
-                print(response)
-                print("-" * 50)
-                
-                save_to_file(response)
-            else:
-                print("No response received")
+        if response:
+            save_to_file(response)
+            print("\nGenerated ORM model:")
+            print("-" * 50)
+            print(response)
+            print("-" * 50)
         else:
-            print("Please enter a valid task")
+            print("No response received")
+        
+        break
 
 if __name__ == "__main__":
     main()
